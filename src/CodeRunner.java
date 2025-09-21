@@ -1,5 +1,7 @@
 import java.io.*;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CodeRunner {
 
@@ -18,16 +20,14 @@ public class CodeRunner {
                 String os = System.getProperty("os.name").toLowerCase();
                 String pythonCommand;
                 if (os.contains("win")) {
-                    // On Windows, the command is "python"
                     pythonCommand = "python";
                 } else {
-                    // On Linux or macOS, "python3" is standard
                     pythonCommand = "python3";
                 }
 
                 // 3. Build and start the process
                 ProcessBuilder pb = new ProcessBuilder(pythonCommand, tempFile.getAbsolutePath());
-                pb.redirectErrorStream(true); // Combine error output with regular output
+                pb.redirectErrorStream(true);
                 Process process = pb.start();
 
                 // 4. Read the output from the process
@@ -45,15 +45,41 @@ public class CodeRunner {
                 output = sb.toString();
 
             } else if (language.equalsIgnoreCase("java")) {
-                // ... (Your Java execution code remains the same) ...
+                // Regex to find and replace the public class name
+                Pattern pattern = Pattern.compile("public\\s+class\\s+(\\w+)", Pattern.MULTILINE);
+                Matcher matcher = pattern.matcher(code);
                 String className = "TempProgram_" + UUID.randomUUID().toString().replace("-", "");
+                String userCode;
+
+                if (matcher.find()) {
+                    userCode = matcher.replaceAll("public class " + className);
+                } else {
+                    return "Compilation Error: No public class found.";
+                }
+
+                // Create a temporary Java file with the new class name
                 File tempFile = new File(className + ".java");
+                userCode = userCode
+                    .replace("\\\"", "\"")
+                    .replace("\\n", "\n")
+                    .replace("\\t", "\t");
 
                 try (FileWriter writer = new FileWriter(tempFile)) {
-                    String userCode = code.replaceAll("class\\s+\\w+", "class " + className);
                     writer.write(userCode);
                 }
 
+                // Debugging step: Log the content of the file being compiled
+                System.out.println("Code being written to file:");
+                System.out.println("---------------------------");
+                try (BufferedReader reader = new BufferedReader(new FileReader(tempFile))) {
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        System.out.println(line);
+                    }
+                }
+                System.out.println("---------------------------");
+
+                // Compile the Java code
                 ProcessBuilder compilePB = new ProcessBuilder("javac", tempFile.getAbsolutePath());
                 compilePB.redirectErrorStream(true);
                 Process compileProcess = compilePB.start();
@@ -68,10 +94,12 @@ public class CodeRunner {
 
                 if (compileProcess.exitValue() != 0) {
                     tempFile.delete();
+                    new File(className + ".class").delete();
                     return "Compilation Error:\n" + compileOutput.toString();
                 }
 
-                ProcessBuilder runPB = new ProcessBuilder("java", className);
+                // Run the compiled Java code
+                ProcessBuilder runPB = new ProcessBuilder("java", "-cp", ".", className);
                 runPB.redirectErrorStream(true);
                 Process runProcess = runPB.start();
 
