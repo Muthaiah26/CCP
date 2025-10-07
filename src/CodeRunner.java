@@ -2,7 +2,8 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.UUID;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.regex.Pattern
+;
 
 public class CodeRunner {
 
@@ -45,7 +46,8 @@ public class CodeRunner {
     if (code == null || code.isEmpty()) {
         return code;
     }
-
+ 
+String cleaned = code;
    String prev;
     do {
         prev = cleaned;
