@@ -1,0 +1,16 @@
+services:
+  # This defines the service type. "web" is for APIs and websites.
+  - type: web 
+    # A unique name for your service. Render will use this.
+    name: CCP
+    # Specifies that we are using a Dockerfile.
+    env: docker
+    # Selects the free instance plan.
+    plan: free
+    # --- The Critical Part ---
+    # This section explicitly defines the port.
+    # Render will read this and forward traffic to port 8080.
+    # It also tells Render where to find your Dockerfile.
+    dockerfilePath: ./Dockerfile
+```
+
