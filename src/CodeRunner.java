@@ -129,9 +129,9 @@ public class CodeRunner {
         Process process = pb.start();
 
         // Timeout to prevent infinite loops (e.g., while(true){})
-        if (!process.waitFor(5, TimeUnit.SECONDS)) {
+        if (!process.waitFor(15, TimeUnit.SECONDS)) {
             process.destroyForcibly();
-            return "Execution Error: Timeout exceeded (5 seconds).";
+            return "Execution Error: Timeout exceeded (15 seconds).";
         }
 
         StringBuilder output = new StringBuilder();
