@@ -16,8 +16,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Copy the dependency library (gson.jar)
-COPY lib ./lib
-COPY build ./build
+COPY . .
 
 
 
