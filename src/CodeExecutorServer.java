@@ -24,7 +24,7 @@ public class CodeExecutorServer {
             System.out.flush();
 
             // CORS headers handling
-            exchange.getResponseHeaders().set("Access-Control-Allow-Origin","http://localhost:3000");
+            exchange.getResponseHeaders().set("Access-Control-Allow-Origin","*");
             exchange.getResponseHeaders().set("Access-Control-Allow-Methods", "POST, OPTIONS");
             exchange.getResponseHeaders().set("Access-Control-Allow-Headers", "Content-Type");
 
