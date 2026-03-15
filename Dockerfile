@@ -17,6 +17,7 @@ RUN apt-get update && \
 
 # Copy the dependency library (gson.jar)
 COPY . .
+RUN javac -cp lib/gson-2.13.2.jar src/*.java -d build
 
 
 
